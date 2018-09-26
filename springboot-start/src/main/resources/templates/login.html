@@ -1,20 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>SpringBoot Start</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>SpringBoot Start - Login</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/login.css}" rel="stylesheet">
 </head>
-<body>
 
-<form th:action="@{/login}">
+<body class="text-center">
+<div id="loginForm" th:action="@{/login}" th:method="post" class="form-signin">
+    <img class="mb-4" th:src="@{/images/bootstrap-solid.svg}" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+    <label for="inputUsername" class="sr-only">Username</label>
+    <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="button" id="btnSubmit">Sign in</button>
+    <p class="mt-5 mb-3 text-muted">&copy; 2018</p>
+</div>
 
-    <input type="text" placeholder="Please input username">
-    <input type="password" placeholder="Please input password">
-    <button type="submit">Login</button>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 
-</form>
+<script th:inline="javascript">
+
+    $('#btnSubmit').click(function (e) {
+
+
+        var username = $('#inputUsername').val();
+        var password = $('#inputPassword').val();
+
+        $.post('[[@{/login}]]', {
+            username: username,
+            password: password
+        }).then(function (value) {
+            console.log(value);
+        });
+
+
+    });
+
+</script>
 
 </body>
 </html>

@@ -29,10 +29,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(String username, String password, Set<Role> roles) throws Exception {
+        logger.info("Try register new user with username \"" + username + "\"");
 
         User user = userRepository.findByUsername(username);
+
         if (user != null) {
-            throw new Exception("Username with \"" + username + "\" is in used");
+            logger.info("Username \"" + username + "\" is in used");
+            throw new Exception("Username \"" + username + "\" is in used");
         }
 
         user = new User();
@@ -49,20 +52,28 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
+        logger.info("User with username \"" + username + "\" has been registered successfully");
+
         return user;
     }
 
     @Override
     public User login(String username, String password) throws Exception {
+        logger.info("Try login with username \"" + username + "\"");
+
         User user = userRepository.findByUsername(username);
 
         if (user != null) {
+            logger.info("User with username \"" + username + "\" is not existed");
             throw new Exception("User with username \"" + username + "\" is not existed");
         }
 
         if (!passwordEncoder.encode(password).equals(user.getPassword())) {
+            logger.info("User with username \"" + username + "\" login failed cause by incorrect password");
             throw new Exception("Incorrect password");
         }
+
+        logger.info("User with username \"" + username + "\" login successfully");
 
         return user;
     }

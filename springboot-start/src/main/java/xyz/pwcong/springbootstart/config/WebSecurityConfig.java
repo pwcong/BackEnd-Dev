@@ -6,20 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import xyz.pwcong.springbootstart.model.RoleName;
 import xyz.pwcong.springbootstart.service.UserService;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 @Configuration
@@ -36,9 +28,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.
+                authorizeRequests()
                 .antMatchers(
-                        "/login",
+                        "/auth/**",
                         "/css/**",
                         "/js/**",
                         "/images/**",
@@ -47,36 +40,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole(RoleName.ADMIN.name())
                 .anyRequest().authenticated()
                 .and()
+                .csrf().disable()
                 .formLogin().loginPage("/login")
-                .successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                .successHandler((request, response, authentication) -> {
 
-                        response.setContentType("application/json; charset=utf-8");
+                    response.setContentType("application/json; charset=utf-8");
 
-                        PrintWriter printWriter = response.getWriter();
-                        printWriter.write("{\"code\": 0, msg: \"Login successfully\"}");
-                        printWriter.flush();
-                        printWriter.close();
+                    PrintWriter printWriter = response.getWriter();
+                    printWriter.write("{\"code\": 0, \"msg\": \"Login successfully\"}");
+                    printWriter.flush();
+                    printWriter.close();
 
-
-                    }
                 })
-                .failureHandler(new AuthenticationFailureHandler() {
-                    @Override
-                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                        response.setContentType("application/json; charset=utf-8");
+                .failureHandler((request, response, exception) -> {
+                    response.setContentType("application/json; charset=utf-8");
 
-                        PrintWriter printWriter = response.getWriter();
-                        printWriter.write("{\"code\": 1, msg: \"" + exception.getMessage() + "\"}");
-                        printWriter.flush();
-                        printWriter.close();
-                    }
+                    PrintWriter printWriter = response.getWriter();
+                    printWriter.write("{\"code\": 1, \"msg\": \"" + exception.getMessage() + "\"}");
+                    printWriter.flush();
+                    printWriter.close();
                 })
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl("/auth/login")
                 .permitAll()
                 .and()
-                .logout().permitAll();
+                .logout().logoutUrl("/auth/logout").permitAll();
     }
 
     @Override

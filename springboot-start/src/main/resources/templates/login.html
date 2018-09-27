@@ -10,21 +10,17 @@
 </head>
 
 <body class="text-center">
-<div id="loginForm" th:action="@{/login}" th:method="post" class="form-signin">
+<form id="loginForm" th:action="@{/login}" th:method="post" class="form-signin">
     <img class="mb-4" th:src="@{/images/bootstrap-solid.svg}" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
     <label for="inputUsername" class="sr-only">Username</label>
     <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" value="remember-me"> Remember me
-        </label>
-    </div>
-    <button class="btn btn-lg btn-primary btn-block" type="button" id="btnSubmit">Sign in</button>
+    <div class="alert alert-danger" style="display: none;" role="alert" id="loginTip"></div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnSubmit">Sign in</button>
     <p class="mt-5 mb-3 text-muted">&copy; 2018</p>
-</div>
+</form>
 
 <script th:src="@{/js/jquery.min.js}"></script>
 <script th:src="@{/js/bootstrap.min.js}"></script>
@@ -32,19 +28,46 @@
 
 <script th:inline="javascript">
 
-    $('#btnSubmit').click(function (e) {
+    var loginTip = $('#loginTip');
+    var inputUsername = $('#inputUsername');
+    inputUsername.change(function () {
+       loginTip.hide();
+    });
+    var inputPassword = $('#inputPassword');
+    inputPassword.change(function () {
+       loginTip.hide();
+    });
 
+    $('#loginForm').submit(function (e) {
 
-        var username = $('#inputUsername').val();
-        var password = $('#inputPassword').val();
+        var username = inputUsername.val();
+        var password = inputPassword.val();
 
-        $.post('[[@{/login}]]', {
+        $.post('[(@{/auth/login})]', {
             username: username,
             password: password
-        }).then(function (value) {
-            console.log(value);
+        }).then(function (res) {
+
+            try {
+                if(res && res.code === 0) {
+                    loginTip.removeClass('alert-danger');
+                    loginTip.addClass('alert-success');
+                    loginTip.text(res.msg);
+                    setTimeout(function () {
+                        window.open('[(@{/})]', '_self');
+                    }, 2000);
+                } else {
+                    loginTip.text(res.msg);
+                }
+                loginTip.show();
+            } catch (e) {
+                loginTip.text('Unknown error');
+                loginTip.show();
+            }
+
         });
 
+        return false;
 
     });
 

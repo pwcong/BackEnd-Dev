@@ -3,27 +3,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>SpringBoot Start - Login</title>
+    <title>SpringBoot SSO Auth Server - Login</title>
     <th:block th:replace="base :: common-head"></th:block>
     <link th:href="@{/css/login.css}" rel="stylesheet">
 </head>
 
 <body class="text-center">
-<form id="loginForm" th:action="@{/login}" th:method="post" class="form-signin">
+<form id="loginForm" th:action="@{/auth/login}" th:method="post" class="form-signin">
     <img class="mb-4" th:src="@{/images/logo.svg}" alt="" width="96" height="96">
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
     <label for="inputUsername" class="sr-only">Username</label>
-    <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+    <input type="text" name="username" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
     <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
     <div class="alert alert-danger" style="display: none;" role="alert" id="loginTip"></div>
     <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnSubmit">Sign in</button>
     <p class="mt-5 mb-3 text-muted">&copy; <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2018</span></p>
 </form>
-
-<script>
-    requirejs(['app/login']);
-</script>
 
 </body>
 </html>

@@ -4,13 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>SpringBoot Start</title>
+    <title>SpringBoot SSO Auth Server</title>
     <th:block th:replace="base :: common-head"></th:block>
 </head>
 <body>
 
 <div style="padding: 32px; text-align: center;">
     <h1>Hello World!</h1>
+
+    <form id="logoutForm" th:action="@{/auth/logout}" th:method="post" class="form-signin" style="width: 150px; margin: 0 auto;">
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnSubmit">Log out</button>
+    </form>
+
+    </form>
+
 </div>
 
 </body>

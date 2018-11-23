@@ -1,4 +1,4 @@
-package xyz.pwcong.springbootstart.config;
+package xyz.pwcong.ssoauthserver.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,10 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import xyz.pwcong.springbootstart.model.RoleName;
-import xyz.pwcong.springbootstart.service.UserService;
-
-import java.io.PrintWriter;
+import xyz.pwcong.ssoauthserver.model.RoleName;
+import xyz.pwcong.ssoauthserver.service.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -28,39 +26,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.
-                authorizeRequests()
+        http
+                .authorizeRequests()
                 .antMatchers(
                         "/auth/**",
+                        "/oauth/**",
                         "/css/**",
                         "/js/**",
-                        "/libs/**",
+                        "/libs",
                         "/images/**",
                         "/fonts/**"
                 ).permitAll()
                 .antMatchers("/admin/**").hasRole(RoleName.ADMIN.name())
                 .anyRequest().authenticated()
                 .and()
-                .csrf().disable()
                 .formLogin().loginPage("/login")
-                .successHandler((request, response, authentication) -> {
-
-                    response.setContentType("application/json; charset=utf-8");
-
-                    PrintWriter printWriter = response.getWriter();
-                    printWriter.write("{\"code\": 0, \"msg\": \"Login successfully\"}");
-                    printWriter.flush();
-                    printWriter.close();
-
-                })
-                .failureHandler((request, response, exception) -> {
-                    response.setContentType("application/json; charset=utf-8");
-
-                    PrintWriter printWriter = response.getWriter();
-                    printWriter.write("{\"code\": 1, \"msg\": \"" + exception.getMessage() + "\"}");
-                    printWriter.flush();
-                    printWriter.close();
-                })
                 .loginProcessingUrl("/auth/login")
                 .permitAll()
                 .and()
